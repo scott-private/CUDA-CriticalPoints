@@ -16,4 +16,4 @@ GPU is used to speed up.
     make
 
 ### run:
-    ./CriticalPoints vtk_file_path
+    ./CriticalPoints vtk_file_path [1:Use Gpu]
