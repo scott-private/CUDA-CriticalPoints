@@ -3,7 +3,7 @@
 Author      : Scott Fu
 Date        : 17/06/2020
 Copyright   : scottfu@foxmail.com
-File Name   : CriticalPoints.cpp
+File Name   : CpuCriticalPoints.cpp
 ============================================================================
 */
 #include <cassert>
@@ -740,18 +740,19 @@ CpuCPFinder::CpuCPFinder(const char* filename) : BaseCPFinder(filename)
 void CpuCPFinder::search()
 {
     Vector3D velocity = {0.0,0.0,0.0};
-    for(int t=0; t < tets.size(); t++){
-        // if(findCriticalPoint(tets[t].data(), velocity, t, criticalPoints))
-        //     criticalTets.push_back(t);
-        if(findCriticalPoint2(tets[t].data(), velocity, t)){
-            criticalTets.push_back(t);
+    for(int t=0; t < seqtets.size()/4; t++){
+        if(findCriticalPoint2(&seqtets[t*4], velocity, t)){
+            ;
+            //std::cout << "Tet [" << t << "] have critical points." << std::endl;
         }
     }
+    std::cout << criticalPoints.size() << std::endl;
 }  
 
 void CpuCPFinder::initialization()
 {
     exactinit();
+
 }
 
 

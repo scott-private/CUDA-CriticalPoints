@@ -70,6 +70,8 @@ struct PointTet{
 struct PointVelocity3D {
     // REAL x, y, z, vx, vy, vz;
     REAL dat[6];
+    int tetId;
+
     __host__ __device__
     REAL operator[](int i) const {return dat[i];}
 
@@ -101,28 +103,44 @@ struct PointVelocity3D {
 
 class BaseCPFinder{
 private:
+    long long getFileSize(const char* filename);
     int loadvtk(const char* filename);
+    int loadWriteFile(const char* filename, const std::string outPoints,
+					  const std::string outVelocities,const std::string outCells);
+    std::vector<Vector3D> lookupPoints(std::vector<unsigned int> pvec);
+    std::vector<Vector3D> lookupVelocities(std::vector<unsigned int> vvec);
+
+    Vector3D lookupPoints(const unsigned int off);
+    Vector3D lookupVelocities(const unsigned int off);
+
+    unsigned int cellsNum;
+    unsigned int pointsNum;
+    unsigned int curCellIdx;
+    unsigned int tetsNumPerBlock;
 public:
     BaseCPFinder(const char* filename);
     virtual ~BaseCPFinder() {};
     
     virtual void search() = 0;
+    virtual void search1(){};
 
     virtual void sortUnique();
 
     // virtual  void check() = 0;
-
     void outfile(std::string outfile, bool check=false);
 
     std::vector<int> criticalTets;
     std::vector<PointTet> criticalPoints;
 protected:
-    void interpolation(const PointVelocity3D pv[4], Vector3D point, Vector3D& velocity);
-
     virtual void initialization() = 0;
-    
+    void interpolation(const PointVelocity3D pv[4], Vector3D point, Vector3D& velocity);
+    int loadDataBlock();
+
+    bool isBigFile;
+	std::string outCells;
+    std::string outPoints;
+	std::string outVelocities;
     std::vector<PointVelocity3D> seqtets;
-    std::vector<std::vector<PointVelocity3D> > tets;
 };
 
 
@@ -141,18 +159,16 @@ protected:
     virtual void initialization();
 };
 
-// Critical Points Finder with GPU
+// Using GPU  Critical Points Finder
 class GpuCPFinder : public BaseCPFinder{
 private:
     int tetnum;
-    PointVelocity3D* d_tets;
+    PointVelocity3D* d_tets1;
     Vector3D* d_queryvec;
 
     PointTet* d_outpoints;
     PointTet* d_outpoints2;
-    int* d_outtets;
-    int* d_outtets2;
-    int* d_tetsize;
+    int* d_outstencil;
     int* d_pointsize;
 public:
     GpuCPFinder(const char* filename) ;
@@ -165,5 +181,27 @@ protected:
     virtual void initialization();
 };
 
+
+// Using GPU critical point finder by Sub-Step
+class GpuSSCPFinder : public BaseCPFinder{
+private:
+    int tetnum;
+    PointVelocity3D* d_tets1;
+    PointVelocity3D* d_tets2;
+    Vector3D* d_queryvec;
+
+    PointTet* d_outpoints;
+    int* d_outstencil;
+    int* d_pointsize;
+public:
+    GpuSSCPFinder(const char* filename) ;
+    
+    virtual ~GpuSSCPFinder();
+
+    virtual void search();
+
+protected:
+    virtual void initialization();
+};
 
 #endif

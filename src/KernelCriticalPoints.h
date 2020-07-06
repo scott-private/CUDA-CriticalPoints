@@ -1,3 +1,12 @@
+/*
+============================================================================
+Author      : Scott Fu
+Date        : 17/06/2020
+Copyright   : scottfu@foxmail.com
+File Name   : KernelCriticalPoints.h
+============================================================================
+*/
+
 #ifndef KERNEL_CRITICAL_POINTS_H
 #define KERNEL_CRITICAL_POINTS_H
 
@@ -317,7 +326,7 @@ bool findCriticalPoint2(const PointVelocity3D pv[4],
                 }
             }
             if(nearId == -1) {return false;}
-            criticalPoints[cpnum++] = PointTet(point,tetId,200);
+            criticalPoints[cpnum++] = PointTet(p[nearId],tetId,200);
             return true;
         }
         return false;
@@ -431,79 +440,47 @@ __global__
 void cudaSearch(const PointVelocity3D* tets,
                 const int tetSize, 
                 Vector3D* velocity,
-                int* criticalTets,
                 PointTet* criticalPoints)
 {
     int tid = blockIdx.x * blockDim.x +  threadIdx.x;
     int dim = gridDim.x * blockDim.x;
     for(int t=tid; t<tetSize; t+=dim){
-        if(findCriticalPoint2(&tets[t*4], *velocity, t, &criticalPoints[t*4]))
-        { criticalTets[t] = t; }
+        findCriticalPoint2(&tets[t*4], *velocity, t, &criticalPoints[t*4]);
     }
 }   
 
 
 __global__
-void cudaCompress(int* criticalTets,
-                  PointTet* criticalPoints,
+void cudaCompress(PointTet* criticalPoints,
                   const int tetSize, 
-                  int* outTets,
                   PointTet* outPoints,
-                  int* outTetSize,
                   int* outPointSize)
 {
     int tid = blockIdx.x * blockDim.x +  threadIdx.x;
     int dim = gridDim.x * blockDim.x;
 
     for(int t=tid; t<tetSize; t+=dim){
-        if(criticalTets[t] != -1) {
-            int tetIdx = atomicAdd(outTetSize , 1);
-            outTets[tetIdx] = criticalTets[t];
-        }
         int pidx = t*4;
         if(criticalPoints[pidx].tetId != -1) {int pIdx = atomicAdd(outPointSize , 1);outPoints[pIdx] =  criticalPoints[pidx];}
         if(criticalPoints[pidx+1].tetId != -1) {int pIdx = atomicAdd(outPointSize , 1);outPoints[pIdx] =  criticalPoints[pidx+1];}
         if(criticalPoints[pidx+2].tetId != -1) {int pIdx = atomicAdd(outPointSize , 1);outPoints[pIdx] =  criticalPoints[pidx+2];}
         if(criticalPoints[pidx+3].tetId != -1) {int pIdx = atomicAdd(outPointSize , 1);outPoints[pIdx] =  criticalPoints[pidx+3];}
     }
-
-    // int lastIdx = 0;
-    // int tetEmptyNum = 0;
-    // int pointEmptyNum = 0;
-    // int myTetMaxLen = 0;
-    // int myPointMaxLen = 0;
-    // for(int t=tid; t<tetSize; t+=dim){
-    //     for(int i=lastIdx; i<t; i++){
-    //         if(criticalTets[i] == -1) {tetEmptyNum++;}
-    //         if(criticalPoints[i*4].tetId == -1) {pointEmptyNum+=4;}
-    //         else if(criticalPoints[i*4+1].tetId == -1) {pointEmptyNum+=3;}
-    //         else if(criticalPoints[i*4+2].tetId == -1) {pointEmptyNum+=2;}
-    //         else if(criticalPoints[i*4+3].tetId == -1) {pointEmptyNum+=1;}
-    //     }
-    //     lastIdx = tid;
-    //     if(criticalTets[t] != -1) {outTets[t-tetEmptyNum] = criticalTets[t]; myTetMaxLen = t-tetEmptyNum + 1;}
-        
-
-    //     int pidx = t*4;
-    //     if(criticalPoints[pidx].tetId != -1){ outPoints[pidx-pointEmptyNum] =  criticalPoints[pidx]; myPointMaxLen = pidx-pointEmptyNum+1;}
-    //     if(criticalPoints[pidx+1].tetId != -1){ outPoints[pidx+1-pointEmptyNum] =  criticalPoints[pidx+1]; myPointMaxLen = pidx-pointEmptyNum+2;}
-    //     if(criticalPoints[pidx+2].tetId != -1){ outPoints[pidx+2-pointEmptyNum] =  criticalPoints[pidx+2]; myPointMaxLen = pidx-pointEmptyNum+3;}
-    //     if(criticalPoints[pidx+3].tetId != -1){ outPoints[pidx+3-pointEmptyNum] =  criticalPoints[pidx+3]; myPointMaxLen = pidx-pointEmptyNum+4;}
-    // }
-    // atomicMax(outTetSize,myTetMaxLen);
-    // atomicMax(outPointSize,myPointMaxLen);
-
 }
 
 
 __global__
-void cudaInit(int* criticalTets, PointTet* criticalPoints, const int tetSize)
+void cudaInit(int* outstencil, PointTet* criticalPoints, const int tetSize)
 {
     int tid = blockIdx.x * blockDim.x +  threadIdx.x;
     int dim = gridDim.x * blockDim.x;
     for(int t=tid; t < tetSize; t+=dim){
-        criticalTets[t] = -1;
         int idx = t*4;
+        outstencil[idx] = -1;
+        outstencil[idx+1] = -1;
+        outstencil[idx+2] = -1;
+        outstencil[idx+3] = -1;
+        
         criticalPoints[idx].tetId = -1;
         criticalPoints[idx+1].tetId = -1;
         criticalPoints[idx+2].tetId = -1;
