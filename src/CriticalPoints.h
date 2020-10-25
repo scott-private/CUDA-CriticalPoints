@@ -21,7 +21,8 @@ File Name   : CriticalPoints.h
 struct PointTet{
     Vector3D pos;
     int      tetId;
-    int      type;
+    int      type; // from inter surface or line
+    int      classType; // 源点 源中心点 源螺旋 源马鞍点 源螺旋马鞍点
 
     __host__ __device__
     PointTet(){pos.x  = 0; pos.y  = 0; pos.z  = 0; tetId = 0; type = 0;} 
@@ -58,11 +59,11 @@ struct PointTet{
     }
 
     void print() const{
-        std::cout << "tet:" << tetId << " pos:" << pos.x << " " << pos.y << " " << pos.z << " type:" << type << std::endl;
+        std::cout << "tet:" << tetId << " pos:" << pos.x << " " << pos.y << " " << pos.z << " type:" << type << " class:" << classType << std::endl;
     }
 
     void out2file(std::ofstream& f) const{
-        f << "tet:" << tetId << " pos:" << pos.x << " " << pos.y << " " << pos.z  << " type:" << type << std::endl;
+        f << "tet:" << tetId << " pos:" << pos.x << " " << pos.y << " " << pos.z  << " type:" << type << " class:" << classType << std::endl;
     }
 
 };
@@ -122,9 +123,10 @@ public:
     virtual ~BaseCPFinder() {};
     
     virtual void search() = 0;
-    virtual void search1(){};
 
     virtual void sortUnique();
+
+    virtual void classification(Vector3D dXYZ);
 
     // virtual  void check() = 0;
     void outfile(std::string outfile, bool check=false);

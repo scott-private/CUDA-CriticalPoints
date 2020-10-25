@@ -432,7 +432,11 @@ int compactNegative(PointVelocity3D* out, PointVelocity3D* in, int* inValid, int
 
 GpuSSCPFinder::GpuSSCPFinder(const char* filename) : BaseCPFinder(filename)
 {
+    auto start = std::chrono::system_clock::now();
     initialization();
+    auto end = std::chrono::system_clock::now();
+    auto diff = end - start;
+    std::cout << "    GPU init: " << std::chrono::duration <double, std::milli> (diff).count() / 1000 << " s" << std::endl;
 }
 
 GpuSSCPFinder::~GpuSSCPFinder()

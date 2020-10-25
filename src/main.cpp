@@ -63,6 +63,12 @@ int main (int argc, char * argv[])
 	finder->sortUnique();
 	printf("Done (%g seconds)\n", stop_timer());
 	// flannUnique(criticalPoints);
+	
+	// 关键点分类 
+	start_timer("Classification:\n");
+	finder->classification(Vector3D(0.01,0.01,0.01));
+	printf("Done (%g seconds)\n", stop_timer());
+
 
 	// 输出
 	start_timer("Outfile:\n");
