@@ -6,6 +6,10 @@ Copyright   : scottfu@foxmail.com
 File Name   : CriticalPoints.cpp
 ============================================================================
 */
+
+#include "CriticalPoints.h"
+
+#include <Eigen/Dense>
 #include <cassert>
 #include <cstdio>
 #include <iostream>
@@ -14,11 +18,6 @@ File Name   : CriticalPoints.cpp
 #include <algorithm>
 #include <string>
 #include <vector>
-#include "CriticalPoints.h"
-
-#include <Eigen/Dense>
-// #include <Eigen/Eigenvalues>
-
 
 BaseCPFinder::BaseCPFinder(const char* filename)
 {    

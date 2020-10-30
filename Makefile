@@ -5,14 +5,14 @@ CXX = g++
 # The following should be adjusted to the target GPU architecture:
 # -gencode arch=compute_50,code=sm_50
 
-mode = release
+mode = debug
 
 ifeq ($(mode),release)
-	CXXFLAGS = -I/opt/cuda-10.0/include/ -I -pipe -std=c++11 -Wall -pedantic -DNDEBUG -O2 -mtune=native -march=native
+	CXXFLAGS = -I/opt/cuda-10.0/include/ -I/home/fugt/.linuxbrew/Cellar/eigen/3.3.8_1/include/eigen3/ -pipe -std=c++11 -Wall -pedantic -DNDEBUG -O2 -mtune=native -march=native
 	NVCCFLAGS = -std=c++11 -m64 -arch=sm_60 -Xptxas="-v"  -DNDEBUG
 else
    mode = debug
-	CXXFLAGS = -I/opt/cuda-10.0/include/ -I -g -pipe -std=c++11 -Wall -O0 -Wcast-align  -Wctor-dtor-privacy -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op  -Wmissing-include-dirs -Wnoexcept -Woverloaded-virtual -Wredundant-decls   -Wsign-promo -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch-default -Wundef -Wno-unused
+	CXXFLAGS = -I/opt/cuda-10.0/include/ -I/home/fugt/.linuxbrew/Cellar/eigen/3.3.8_1/include/eigen3/ -g -pipe -std=c++11 -Wall -O0 -Wcast-align  -Wctor-dtor-privacy -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op  -Wmissing-include-dirs -Wnoexcept -Woverloaded-virtual -Wredundant-decls   -Wsign-promo -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch-default -Wundef -Wno-unused
 	NVCCFLAGS = -G -std=c++11 -m64 -arch=sm_60
 endif
 

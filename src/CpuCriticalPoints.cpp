@@ -6,12 +6,13 @@ Copyright   : scottfu@foxmail.com
 File Name   : CpuCriticalPoints.cpp
 ============================================================================
 */
+
+#include "CriticalPoints.h"
+#include "CpuPredicates.h"
 #include <cassert>
 #include <iostream>
 #include <vector>
 #include <float.h>
-#include "CriticalPoints.h"
-#include "CpuPredicates.h"
 
 
 inline Vector3D inverseInterpolation(const PointVelocity3D& p1, 

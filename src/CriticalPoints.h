@@ -10,13 +10,13 @@ File Name   : CriticalPoints.h
 #ifndef CRITICAL_POINTS_H
 #define CRITICAL_POINTS_H
 
+#include "common.h"
+#include "Geometry3D.h"
 #include <cstddef> // std::size_t
 #include <vector>
 #include <vector>
 #include <iostream>
 #include <fstream>
-#include "common.h"
-#include "Geometry3D.h"
 
 struct PointTet{
     Vector3D pos;

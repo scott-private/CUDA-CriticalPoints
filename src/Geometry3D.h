@@ -10,13 +10,13 @@ File Name   : Geometry3D.h
 #ifndef GEOMETRY3D_H
 #define GEOMETRY3D_H
 
+#include "common.h"
 #include <iostream>
 #include <cstdlib>
 #include <cmath>
 #include <cstdio>
 #include <cassert>
 #include <algorithm>
-#include "common.h"
 
 struct Vector3D{
     REAL x,y,z;

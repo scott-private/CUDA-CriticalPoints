@@ -6,6 +6,11 @@ Copyright   : scottfu@foxmail.com
 File Name   : GpuCriticalPoints.cu
 ============================================================================
 */
+
+
+#include "CriticalPoints.h"
+#include "KernelCriticalPoints.h"
+
 #include <cassert>
 #include <iostream>
 #include <vector>
@@ -13,11 +18,7 @@ File Name   : GpuCriticalPoints.cu
 #include <float.h>
 #include <cuda_runtime.h>
 #include <curand_kernel.h>
-
 #include <thrust/copy.h>
-
-#include "CriticalPoints.h"
-#include "KernelCriticalPoints.h"
 
 
 GpuCPFinder::GpuCPFinder(const char* filename) : BaseCPFinder(filename)

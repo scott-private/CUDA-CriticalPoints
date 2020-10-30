@@ -7,6 +7,8 @@ File Name   : main.cu
 ============================================================================
 */
 
+#include "common.h"
+#include "CriticalPoints.h"
 #include <time.h>
 #include <cstdio>
 #include <iostream>
@@ -15,8 +17,6 @@ File Name   : main.cu
 #include <algorithm>
 #include <string>
 #include <vector>
-#include "common.h"
-#include "CriticalPoints.h"
 
 clock_t start_time_;
 

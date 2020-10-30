@@ -10,6 +10,8 @@ File Name   : common.h
 #ifndef COMMON_H
 #define COMMON_H
 
+#include <cstdio>
+#include <iostream>
 #include <cuda_runtime.h>
 #include <curand_kernel.h>
 
