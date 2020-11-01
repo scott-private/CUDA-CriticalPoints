@@ -5,7 +5,7 @@ CXX = g++
 # The following should be adjusted to the target GPU architecture:
 # -gencode arch=compute_50,code=sm_50
 
-mode = debug
+mode = release
 
 ifeq ($(mode),release)
 	CXXFLAGS = -I/opt/cuda-10.0/include/ -I/home/fugt/.linuxbrew/Cellar/eigen/3.3.8_1/include/eigen3/ -pipe -std=c++11 -Wall -pedantic -DNDEBUG -O2 -mtune=native -march=native

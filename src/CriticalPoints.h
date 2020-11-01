@@ -22,7 +22,17 @@ struct PointTet{
     Vector3D pos;
     int      tetId;
     int      type; // from inter surface or line
-    int      classType; // 源点 源中心点 源螺旋 源马鞍点 源螺旋马鞍点
+    int      classType; 
+
+    // attracting saddle 1
+    // attracting node 2
+    // repelling saddle 3
+    // repelling node 4
+
+    // attracting spiral 5
+    // attracting spiral saddle 6
+    // repelling spiral 7
+    // repelling spiral saddle 8
 
     __host__ __device__
     PointTet(){pos.x  = 0; pos.y  = 0; pos.z  = 0; tetId = 0; type = 0;} 
@@ -59,11 +69,36 @@ struct PointTet{
     }
 
     void print() const{
-        std::cout << "tet:" << tetId << " pos:" << pos.x << " " << pos.y << " " << pos.z << " type:" << type << " class:" << classType << std::endl;
+        std::string classStr;
+        std::cout << "tet:" << tetId << " pos:" << pos.x << " " << pos.y << " " << pos.z << " type:" << type << " class:";
+        if(classType == 1){     classStr =  "attracting_saddle"         ;}
+        else if(classType == 2){classStr =  "attracting_node"           ;}
+        else if(classType == 3){classStr =  "repelling_saddle"          ;}
+        else if(classType == 4){classStr =  "repelling_node"            ;}
+        else if(classType == 5){classStr =  "attracting_spiral"         ;}
+        else if(classType == 6){classStr =  "attracting_spiral_saddle"  ;}
+        else if(classType == 7){classStr =  "repelling_spiral"          ;}
+        else if(classType == 8){classStr =  "repelling_spiral_saddle"   ;}
+        else{                   classStr =  "no"                        ;}
+
+        std::cout << classStr << std::endl;
     }
 
     void out2file(std::ofstream& f) const{
-        f << "tet:" << tetId << " pos:" << pos.x << " " << pos.y << " " << pos.z  << " type:" << type << " class:" << classType << std::endl;
+        std::string classStr;
+        f << "tet:" << tetId << " pos:" << pos.x << " " << pos.y << " " << pos.z  << " type:" << type << " class:";
+        
+        if(classType == 1){     classStr =  "attracting_saddle"         ;}
+        else if(classType == 2){classStr =  "attracting_node"           ;}
+        else if(classType == 3){classStr =  "repelling_saddle"          ;}
+        else if(classType == 4){classStr =  "repelling_node"            ;}
+        else if(classType == 5){classStr =  "attracting_spiral"         ;}
+        else if(classType == 6){classStr =  "attracting_spiral_saddle"  ;}
+        else if(classType == 7){classStr =  "repelling_spiral"          ;}
+        else if(classType == 8){classStr =  "repelling_spiral_saddle"   ;}
+        else{                   classStr =  "no"                        ;}
+
+        f << classStr << std::endl;
     }
 
 };
